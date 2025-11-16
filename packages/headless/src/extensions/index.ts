@@ -11,6 +11,13 @@ import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
+import Table from "@tiptap/extension-table";
+const TableExtension = Table.configure({
+  resizable: true,
+});
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
 import CustomKeymap from "./custom-keymap";
 import { ImageResizer } from "./image-resizer";
 import { Twitter } from "./twitter";
@@ -62,27 +69,4 @@ const Horizontal = HorizontalRule.extend({
 
 export * from "./ai-highlight";
 export * from "./slash-command";
-export {
-  CodeBlockLowlight,
-  Horizontal as HorizontalRule,
-  ImageResizer,
-  InputRule,
-  PlaceholderExtension as Placeholder,
-  StarterKit,
-  TaskItem,
-  TaskList,
-  TiptapImage,
-  TiptapUnderline,
-  MarkdownExtension,
-  TextStyle,
-  Color,
-  HighlightExtension,
-  CustomKeymap,
-  TiptapLink,
-  UpdatedImage,
-  Youtube,
-  Twitter,
-  Mathematics,
-  CharacterCount,
-  GlobalDragHandle,
-};
+export { CodeBlockLowlight, Horizontal as HorizontalRule, ImageResizer, InputRule, PlaceholderExtension as Placeholder, StarterKit, TaskItem, TaskList, TiptapImage, TiptapUnderline, MarkdownExtension, TextStyle, Color, HighlightExtension, CustomKeymap, TiptapLink, UpdatedImage, Youtube, Twitter, Mathematics, CharacterCount, GlobalDragHandle, TableExtension as Table, TableCell, TableHeader, TableRow, };
