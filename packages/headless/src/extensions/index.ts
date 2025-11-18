@@ -11,6 +11,78 @@ import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
+
+const TableExtension = Table.configure({
+  resizable: true,
+}).extend({
+  addInputRules() {
+    return [
+      // Input rule for full table with headers and separator
+      new InputRule({
+        find: /^(\|\s*.+?\s*\|)\n(\|\s*[-:]+\s*\|)(?:\n|$)/,
+        handler: ({ state, match, range }) => {
+          const headerLine = match[1];
+          const headerCells = headerLine.split('|').filter(Boolean).map(cell => cell.trim());
+          
+          if (headerCells.length === 0) return;
+          
+          // Create table structure with non-null assertions
+          const table = state.schema.nodes.table!.create({}, [
+            // Create header row
+            state.schema.nodes.table_row!.create({}, [
+              ...headerCells.map(header => 
+                state.schema.nodes.table_header!.create({}, [
+                  state.schema.text(header)
+                ])
+              )
+            ])
+            // We'll let the user add content rows manually
+          ]);
+          
+          const { tr } = state;
+          tr.delete(range.from, range.to).insert(range.from, table);
+        },
+      }),
+      // Input rule for just headers (without separator)
+      new InputRule({
+        find: /^(\|\s*.+?\s*\|)(?:$)/,
+        handler: ({ state, match, range }) => {
+          const headerLine = match[1];
+          const headerCells = headerLine.split('|').filter(Boolean).map(cell => cell.trim());
+          
+          if (headerCells.length === 0) return;
+          
+          // Create table structure with non-null assertions
+          const table = state.schema.nodes.table!.create({}, [
+            // Create header row
+            state.schema.nodes.table_row!.create({}, [
+              ...headerCells.map(header => 
+                state.schema.nodes.table_header!.create({}, [
+                  state.schema.text(header)
+                ])
+              )
+            ]),
+            // Create an empty content row
+            state.schema.nodes.table_row!.create({}, [
+              ...headerCells.map(() => 
+                state.schema.nodes.table_cell!.create({}, [
+                  state.schema.text('')
+                ])
+              )
+            ])
+          ]);
+          
+          const { tr } = state;
+          tr.delete(range.from, range.to).insert(range.from, table);
+        },
+      }),
+    ];
+  },
+});
 import CustomKeymap from "./custom-keymap";
 import { ImageResizer } from "./image-resizer";
 import { Twitter } from "./twitter";
@@ -62,27 +134,4 @@ const Horizontal = HorizontalRule.extend({
 
 export * from "./ai-highlight";
 export * from "./slash-command";
-export {
-  CodeBlockLowlight,
-  Horizontal as HorizontalRule,
-  ImageResizer,
-  InputRule,
-  PlaceholderExtension as Placeholder,
-  StarterKit,
-  TaskItem,
-  TaskList,
-  TiptapImage,
-  TiptapUnderline,
-  MarkdownExtension,
-  TextStyle,
-  Color,
-  HighlightExtension,
-  CustomKeymap,
-  TiptapLink,
-  UpdatedImage,
-  Youtube,
-  Twitter,
-  Mathematics,
-  CharacterCount,
-  GlobalDragHandle,
-};
+export { CodeBlockLowlight, Horizontal as HorizontalRule, ImageResizer, InputRule, PlaceholderExtension as Placeholder, StarterKit, TaskItem, TaskList, TiptapImage, TiptapUnderline, MarkdownExtension, TextStyle, Color, HighlightExtension, CustomKeymap, TiptapLink, UpdatedImage, Youtube, Twitter, Mathematics, CharacterCount, GlobalDragHandle, TableExtension as Table, TableCell, TableHeader, TableRow, };
